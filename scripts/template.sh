@@ -1,4 +1,5 @@
 qm destroy 8000
+xz -v -d talos/talos.raw.xz
 sleep 3
 qm create 8000 --memory 2048 --net0 virtio,bridge=vmbr0 --agent 1 --cores 2 --sockets 1 --cpu cputype=x86-64-v2
 qm importdisk 8000 talos/talos.raw local-lvm

@@ -108,23 +108,8 @@ resource "null_resource" "copy_image" {
   }
 }
 
-resource "null_resource" "uncompress_image" {
-  depends_on = [null_resource.copy_image]
-  provisioner "remote-exec" {
-    connection {
-      host        = var.PROXMOX_IP
-      user        = var.PROXMOX_USERNAME
-      private_key = file("~/.ssh/id_rsa")
-    }
-
-    inline = [
-      "xz -v -d talos/talos.raw.xz"
-    ]
-  }
-}
-
 resource "null_resource" "create_template" {
-  depends_on = [null_resource.uncompress_image]
+  depends_on = [null_resource.copy_image]
   provisioner "remote-exec" {
     when = create
     connection {
