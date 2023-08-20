@@ -70,7 +70,7 @@ resource "docker_container" "imager" {
   }
 }
 
-# Not sure how to get around this sleep as the container exists on it's own
+# Not sure how to get around this sleep as the container exits on it's own after creating the image
 # and terraform expects the container to keep running with attach = true
 resource "time_sleep" "sleep" {
   depends_on = [
