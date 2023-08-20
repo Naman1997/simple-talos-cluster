@@ -1,3 +1,5 @@
+#!/bin/bash
+
 MAX_RETRIES=30
 RETRY_INTERVAL=1
 
