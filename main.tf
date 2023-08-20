@@ -13,9 +13,10 @@ data "external" "versions" {
 }
 
 locals {
-  qemu_ga_version = data.external.versions.result["qemu_ga_version"]
-  amd_ucode_version  = data.external.versions.result["amd_ucode_version"]
-  intel_ucode_version  = data.external.versions.result["intel_ucode_version"]
+  qemu_ga_version     = data.external.versions.result["qemu_ga_version"]
+  amd_ucode_version   = data.external.versions.result["amd_ucode_version"]
+  intel_ucode_version = data.external.versions.result["intel_ucode_version"]
+  imager_version = data.external.versions.result["imager_version"]
   system_command = var.system_type == "amd" ? [
     "metal",
     "--system-extension-image",
@@ -34,7 +35,7 @@ locals {
 provider "docker" {}
 
 resource "docker_image" "imager" {
-  name = "ghcr.io/siderolabs/imager:latest"
+  name = "ghcr.io/siderolabs/imager:${local.imager_version}"
 }
 
 resource "null_resource" "cleanup" {
@@ -69,9 +70,68 @@ resource "docker_container" "imager" {
   }
 }
 
+# Not sure how to get around this sleep as the container exists on it's own
+# and terraform expects the container to keep running with attach = true
 resource "time_sleep" "sleep" {
   depends_on = [
     docker_container.imager
   ]
-  create_duration = "15s"
+  create_duration = "30s"
+}
+
+resource "null_resource" "copy_image" {
+  depends_on = [
+    time_sleep.sleep
+  ]
+  provisioner "remote-exec" {
+    connection {
+      host        = var.PROXMOX_IP
+      user        = var.PROXMOX_USERNAME
+      private_key = file("~/.ssh/id_rsa")
+    }
+
+    inline = [
+      "rm -rf /root/talos",
+      "mkdir /root/talos"
+    ]
+  }
+
+  provisioner "file" {
+    source      = "${path.root}/output/metal-amd64.raw.xz"
+    destination = "/root/talos/talos.raw.xz"
+    connection {
+      type        = "ssh"
+      host        = var.PROXMOX_IP
+      user        = var.PROXMOX_USERNAME
+      private_key = file("~/.ssh/id_rsa")
+    }
+  }
+}
+
+resource "null_resource" "uncompress_image" {
+  depends_on = [null_resource.copy_image]
+  provisioner "remote-exec" {
+    connection {
+      host        = var.PROXMOX_IP
+      user        = var.PROXMOX_USERNAME
+      private_key = file("~/.ssh/id_rsa")
+    }
+
+    inline = [
+      "xz -v -d talos/talos.raw.xz"
+    ]
+  }
+}
+
+resource "null_resource" "create_template" {
+  depends_on = [null_resource.uncompress_image]
+  provisioner "remote-exec" {
+    when = create
+    connection {
+      host        = var.PROXMOX_IP
+      user        = var.PROXMOX_USERNAME
+      private_key = file("~/.ssh/id_rsa")
+    }
+    script = "${path.root}/scripts/template.sh"
+  }
 }

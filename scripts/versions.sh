@@ -71,7 +71,45 @@ fi
 
 # echo "The latest version of siderolabs/qemu-guest-agent is: $qemu_ga_version"
 
+# FIXME - checkout test.sh
+# # Get latest version of imager
+# imager_version=""
+# version_array=($(list_versions "siderolabs/imager" | jq -r '.[]'))
+# largest_major=0
+# largest_minor=0
+# largest_patch=0
+# echo $version_array
+# # Loop through the bash array and find the largest version
+# for version in "${version_array[@]}"; do
+#   if [[ "$version" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+#     major="${version%%.*}"
+#     minor="${version#*.}"
+#     minor="${minor%%.*}"
+#     patch="${version##*.}"
+
+#     if [[ "$major" -gt "$largest_major" || ("$major" -eq "$largest_major" && "$minor" -gt "$largest_minor") || ("$major" -eq "$largest_major" && "$minor" -eq "$largest_minor" && "$patch" -gt "$largest_patch") ]]; then
+#       largest_major="$major"
+#       largest_minor="$minor"
+#       largest_patch="$patch"
+#       imager_version="$version"
+#     fi
+#   fi
+# done
+
+# if [[ -z "$imager_version" ]]; then
+#   echo "Unable to find the latest version for siderolabs/imager."
+#   exit 1
+# fi
+
+# echo "The latest version of siderolabs/imager is: $imager_version"
+
+# jq -n --arg intel_ucode_version "$intel_ucode_version"\
+#  --arg amd_ucode_version "$amd_ucode_version" \
+#  --arg qemu_ga_version "$qemu_ga_version" \
+#  --arg imager_version "$imager_version" \
+#  '{"intel_ucode_version":$intel_ucode_version, "amd_ucode_version":$amd_ucode_version, "qemu_ga_version":$qemu_ga_version, "imager_version":$imager_version}'
+
 jq -n --arg intel_ucode_version "$intel_ucode_version"\
  --arg amd_ucode_version "$amd_ucode_version" \
  --arg qemu_ga_version "$qemu_ga_version" \
- '{"intel_ucode_version":$intel_ucode_version, "amd_ucode_version":$amd_ucode_version, "qemu_ga_version":$qemu_ga_version}'
+ '{"intel_ucode_version":$intel_ucode_version, "amd_ucode_version":$amd_ucode_version, "qemu_ga_version":$qemu_ga_version, "imager_version": "v1.5.0"}'
