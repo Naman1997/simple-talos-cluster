@@ -1,0 +1,2 @@
+# Valid values are intel/amd
+system_type="intel"

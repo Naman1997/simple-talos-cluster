@@ -36,3 +36,4 @@ terraform.rc
 
 # Custom project paths
 output/*
+terraform.tfvars
