@@ -24,6 +24,22 @@ fi
 
 # echo "The latest version of siderolabs/intel-ucode is: $intel_ucode_version"
 
+# Get latest version of amd-ucode
+amd_ucode_version=0
+version_array=($(list_versions "siderolabs/amd-ucode" | jq -r '.[]'))
+for element in "${version_array[@]}"; do
+  if [[ "$element" =~ ^[0-9]+$ && "$element" -gt "$amd_ucode_version" ]]; then
+    amd_ucode_version="$element"
+  fi
+done
+
+if [[ "$amd_ucode_version" -eq 0 ]]; then
+  echo "Unable to find the latest version for siderolabs/amd-ucode."
+  exit 1
+fi
+
+# echo "The latest version of siderolabs/intel-ucode is: $amd_ucode_version"
+
 # Get latest version of qemu-guest-agent
 qemu_ga_version=""
 version_array=($(list_versions "siderolabs/qemu-guest-agent" | jq -r '.[]'))
@@ -55,4 +71,7 @@ fi
 
 # echo "The latest version of siderolabs/qemu-guest-agent is: $qemu_ga_version"
 
-jq -n --arg intel_ucode_version "$intel_ucode_version" --arg qemu_ga_version "$qemu_ga_version" '{"intel_ucode_version":$intel_ucode_version, "qemu_ga_version":$qemu_ga_version}'
+jq -n --arg intel_ucode_version "$intel_ucode_version"\
+ --arg amd_ucode_version "$amd_ucode_version" \
+ --arg qemu_ga_version "$qemu_ga_version" \
+ '{"intel_ucode_version":$intel_ucode_version, "amd_ucode_version":$amd_ucode_version, "qemu_ga_version":$qemu_ga_version}'
