@@ -5,7 +5,18 @@ terraform {
       source  = "kreuzwerker/docker"
       version = "~> 3.0.2"
     }
+    proxmox = {
+      source  = "telmate/proxmox"
+      version = "2.9.14"
+    }
   }
+}
+
+provider "proxmox" {
+  pm_api_url      = var.PROXMOX_API_ENDPOINT
+  pm_user         = "${var.PROXMOX_USERNAME}@pam"
+  pm_password     = var.PROXMOX_PASSWORD
+  pm_tls_insecure = true
 }
 
 data "external" "versions" {
@@ -120,3 +131,50 @@ resource "null_resource" "create_template" {
     script = "${path.root}/scripts/template.sh"
   }
 }
+
+module "master_domain" {
+
+  depends_on = [
+    null_resource.create_template
+  ]
+
+  source         = "./modules/domain"
+  count          = var.MASTER_COUNT
+  name           = format("talos-master%s", count.index)
+  memory         = var.master_config.memory
+  vcpus          = var.master_config.vcpus
+  sockets        = var.master_config.sockets
+  autostart      = var.autostart
+  default_bridge = var.DEFAULT_BRIDGE
+  target_node    = var.TARGET_NODE
+}
+
+module "worker_domain" {
+
+  depends_on = [
+    null_resource.create_template
+  ]
+
+  source         = "./modules/domain"
+  count          = var.WORKER_COUNT
+  name           = format("talos-worker%s", count.index)
+  memory         = var.worker_config.memory
+  vcpus          = var.worker_config.vcpus
+  sockets        = var.worker_config.sockets
+  autostart      = var.autostart
+  default_bridge = var.DEFAULT_BRIDGE
+  target_node    = var.TARGET_NODE
+}
+
+# FIXME: Use ip addresses to configure talos
+# resource "local_file" "master_ip_config" {
+#   depends_on = [ module.master_domain ]
+#   content = join(",", module.master_domain.*.address)
+#   filename = "master_ip_config"
+# }
+
+# resource "local_file" "worker_ip_config" {
+#   depends_on = [ module.worker_domain ]
+#   content = join(",", module.worker_domain.*.address)
+#   filename = "worker_ip_config"
+# }
