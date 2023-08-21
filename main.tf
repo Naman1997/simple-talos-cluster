@@ -158,6 +158,8 @@ module "worker_domain" {
   target_node    = var.TARGET_NODE
 }
 
+# FIXME: Wierd behaviour with IP address
+# Can try to only output the mac address instead of the IP from the module
 resource "local_file" "haproxy_config" {
   depends_on = [
     module.master_domain.node,
