@@ -7,8 +7,6 @@ Automated talos cluster with system extensions
 
 ## Dependencies
 
-`Client` refers to the node that will be executing `terraform apply` to create the cluster. The `Raspberry Pi` can be replaced with a VM or a LXC container. The items marked `Optional` are needed only when you want to expose your kubernetes services to the internet via WireGuard.
-
 | Dependency | Location |
 | ------ | ------ |
 | [Proxmox](https://www.proxmox.com/en/proxmox-ve) | Proxmox node |
@@ -21,6 +19,10 @@ Automated talos cluster with system extensions
 | [Wireguard](https://www.wireguard.com/) (Optional) | Raspberry Pi & Cloud VPS |
 | [Docker](https://docs.docker.com/) (Optional) | Cloud VPS |
 | [Docker](https://docs.docker.com/) | Client |
+
+`Client` refers to the node that will be executing `terraform apply` to create the cluster. The `Raspberry Pi` can be replaced with a VM or a LXC container. The items marked `Optional` are needed only when you want to expose your kubernetes services to the internet via WireGuard.
+
+Docker is mandatory on the `Client` as this projects builds a custom talos image with system extensions using the [imager](https://github.com/siderolabs/talos/pkgs/container/installer) docker image on the `Client` itself.
 
 ### Create an HA Proxy Server
 
@@ -48,3 +50,26 @@ terraform plan
 # WARNING: The next command will override ~/.kube/config. Make a backup if needed.
 terraform apply --auto-approve
 ```
+
+## Using HAProxy as a Load Balancer for an Ingress
+
+Since HAProxy is load-balancing ports 80 and 443 (of worker nodes), we can deploy nginx-controller such that it uses those ports as an external load balancer IP.
+
+```
+# Update the IP address in the controller yaml
+vim ./nginx-example/nginx-controller.yaml
+helm install ingress-nginx ingress-nginx/ingress-nginx -n ingress-nginx --values ./nginx-example/nginx-controller.yaml --create-namespace
+kubectl create deployment nginx --image=nginx --replicas=5
+k expose deploy nginx --port 80
+# Edit this config to point to your domain
+vim ./nginx-example/ingress.yaml.example
+mv ./nginx-example/ingress.yaml.example ./nginx-example/ingress.yaml
+k create -f ./nginx-example/ingress.yaml
+curl -k https://192.168.0.101
+```
+
+## Exposing your cluster to the internet with a free subdomain! (Optional)
+
+You'll need an account with duckdns - they provide you with a free subdomain that you can use to host your web services from your home internet. You'll also be needing a VPS in the cloud that can take in your traffic from a public IP address so that you don't expose your own IP address. Oracle provides a [free tier](https://www.oracle.com/in/cloud/free/) account with 4 vcpus and 24GB of memory. I'll be using this to create a VM. To expose the traffic properly, follow this [guide](https://github.com/Naman1997/simple-fcos-cluster/blob/main/docs/Wireguard_Setup.md).
+
+For this setup, we'll be installing wireguard on the VPS and the node that is running haproxy. The traffic flow is shown in the image below.
