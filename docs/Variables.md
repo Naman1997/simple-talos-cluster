@@ -2,6 +2,7 @@
 
 | Variable | Description |
 | ------ | ------ |
+| system_type | System Type. Valid values: intel / amd |
 | PROXMOX_API_ENDPOINT | API endpoint for proxmox |
 | PROXMOX_USERNAME | User name used to login proxmox |
 | PROXMOX_PASSWORD | Password used to login proxmox |
