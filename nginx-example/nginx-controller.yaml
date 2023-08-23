@@ -1,0 +1,11 @@
+controller:
+  hostPort:
+    enabled: true
+    ports:
+      http: 80
+      https: 443
+
+  kind: DaemonSet
+  service:
+    # Change your Load Balancer's IP here
+    externalIPs: [192.168.0.101]
