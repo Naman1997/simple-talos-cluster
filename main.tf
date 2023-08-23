@@ -51,9 +51,8 @@ resource "docker_image" "imager" {
 
 resource "null_resource" "cleanup" {
   provisioner "local-exec" {
-    command     = "mkdir -p output && rm -f talos_setup.sh && rm -f haproxy.cfg"
+    command     = "mkdir -p output && rm -f talos_setup.sh haproxy.cfg talosconfig worker.yaml controlplane.yaml"
     working_dir = path.root
-    when        = create
   }
 }
 
@@ -81,15 +80,15 @@ resource "docker_container" "imager" {
   }
 }
 
-# Not sure how to get around this sleep as the container exits on it's own after creating the image
-# and terraform expects the container to keep running with attach = true
-resource "time_sleep" "sleep" {
-  depends_on      = [docker_container.imager]
-  create_duration = "30s"
+resource "null_resource" "wait_for_imager" {
+  depends_on = [docker_container.imager]
+  provisioner "local-exec" {
+    command = "/bin/bash scripts/docker.sh"
+  }
 }
 
 resource "null_resource" "copy_image" {
-  depends_on = [time_sleep.sleep]
+  depends_on = [null_resource.wait_for_imager]
   provisioner "remote-exec" {
     connection {
       host        = var.PROXMOX_IP
@@ -158,8 +157,6 @@ module "worker_domain" {
   target_node    = var.TARGET_NODE
 }
 
-# FIXME: Wierd behaviour with IP address
-# Can try to only output the mac address instead of the IP from the module
 resource "local_file" "haproxy_config" {
   depends_on = [
     module.master_domain.node,
@@ -205,7 +202,7 @@ resource "local_file" "talosctl_config" {
   ]
   content = templatefile("${path.root}/templates/talosctl.tmpl",
     {
-      load_balancer      = var.ha_proxy_server,
+      load_balancer = var.ha_proxy_server,
       node_map_masters = zipmap(
         tolist(module.master_domain.*.address), tolist(module.master_domain.*.name)
       ),
