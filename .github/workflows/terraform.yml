@@ -26,6 +26,10 @@ jobs:
     - name: Create terraform.tfvars
       run: cp ./terraform.tfvars.example ./terraform.tfvars
 
+    # Create random SSH keys
+    - name: Create random SSH keys
+      run: mkdir ~/.ssh && touch ~/.ssh/id_rsa && touch ~/.ssh/id_rsa.pub
+
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
       run: terraform init
