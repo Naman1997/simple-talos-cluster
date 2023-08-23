@@ -203,12 +203,8 @@ resource "local_file" "talosctl_config" {
   content = templatefile("${path.root}/templates/talosctl.tmpl",
     {
       load_balancer = var.ha_proxy_server,
-      node_map_masters = zipmap(
-        tolist(module.master_domain.*.address), tolist(module.master_domain.*.name)
-      ),
-      node_map_workers = zipmap(
-        tolist(module.worker_domain.*.address), tolist(module.worker_domain.*.name)
-      ),
+      node_map_masters = tolist(module.master_domain.*.address),
+      node_map_workers = tolist(module.worker_domain.*.address)
       primary_controller = module.master_domain[0].address
     }
   )

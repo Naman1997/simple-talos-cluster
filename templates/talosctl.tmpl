@@ -1,11 +1,11 @@
 #!/bin/bash
-talosctl gen config mycluster https://${load_balancer}:6443 --force
+talosctl machineconfig gen mycluster https://${load_balancer}:6443
 sleep 3
-%{ for node_host, node_hostname in node_map_masters ~}
+%{ for node_host in node_map_masters ~}
 talosctl apply-config --insecure --nodes ${node_host} --file controlplane.yaml
 echo "Applied controller config to ${node_host}"
 %{endfor}
-%{ for node_host, node_hostname in node_map_workers ~}
+%{ for node_host in node_map_workers ~}
 talosctl apply-config --insecure --nodes ${node_host} --file worker.yaml
 echo "Applied worker config to ${node_host}"
 %{endfor}
