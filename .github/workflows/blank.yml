@@ -1,0 +1,35 @@
+name: 'Terraform'
+
+on:
+  push:
+    branches:
+    - main
+  pull_request:
+
+jobs:
+  terraform:
+    name: 'Terraform'
+    runs-on: ubuntu-latest
+    environment: production
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+    # Checkout the repository to the GitHub Actions runner
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    # Copy the terraform.tfvars.example file for variables
+    - name: Create terraform.tfvars
+      run: cp ./terraform.tfvars.example ./terraform.tfvars
+
+    # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+    - name: Terraform Init
+      run: terraform init
+
+    # Generates an execution plan for Terraform
+    - name: Terraform Validate
+      run: terraform validate
