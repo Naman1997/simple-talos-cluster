@@ -27,7 +27,7 @@ locals {
   qemu_ga_version     = data.external.versions.result["qemu_ga_version"]
   amd_ucode_version   = data.external.versions.result["amd_ucode_version"]
   intel_ucode_version = data.external.versions.result["intel_ucode_version"]
-  imager_version = data.external.versions.result["imager_version"]
+  imager_version      = data.external.versions.result["imager_version"]
   system_command = var.system_type == "amd" ? [
     "metal",
     "--system-extension-image",
@@ -51,9 +51,8 @@ resource "docker_image" "imager" {
 
 resource "null_resource" "cleanup" {
   provisioner "local-exec" {
-    command     = "mkdir -p output"
+    command     = "mkdir -p output && rm -f talos_setup.sh haproxy.cfg talosconfig worker.yaml controlplane.yaml"
     working_dir = path.root
-    when        = create
   }
 }
 
@@ -81,19 +80,15 @@ resource "docker_container" "imager" {
   }
 }
 
-# Not sure how to get around this sleep as the container exits on it's own after creating the image
-# and terraform expects the container to keep running with attach = true
-resource "time_sleep" "sleep" {
-  depends_on = [
-    docker_container.imager
-  ]
-  create_duration = "30s"
+resource "null_resource" "wait_for_imager" {
+  depends_on = [docker_container.imager]
+  provisioner "local-exec" {
+    command = "/bin/bash scripts/docker.sh"
+  }
 }
 
 resource "null_resource" "copy_image" {
-  depends_on = [
-    time_sleep.sleep
-  ]
+  depends_on = [null_resource.wait_for_imager]
   provisioner "remote-exec" {
     connection {
       host        = var.PROXMOX_IP
@@ -134,9 +129,7 @@ resource "null_resource" "create_template" {
 
 module "master_domain" {
 
-  depends_on = [
-    null_resource.create_template
-  ]
+  depends_on = [null_resource.create_template]
 
   source         = "./modules/domain"
   count          = var.MASTER_COUNT
@@ -151,9 +144,7 @@ module "master_domain" {
 
 module "worker_domain" {
 
-  depends_on = [
-    null_resource.create_template
-  ]
+  depends_on = [null_resource.create_template]
 
   source         = "./modules/domain"
   count          = var.WORKER_COUNT
@@ -166,15 +157,64 @@ module "worker_domain" {
   target_node    = var.TARGET_NODE
 }
 
-# FIXME: Use ip addresses to configure talos
-# resource "local_file" "master_ip_config" {
-#   depends_on = [ module.master_domain ]
-#   content = join(",", module.master_domain.*.address)
-#   filename = "master_ip_config"
-# }
+resource "local_file" "haproxy_config" {
+  depends_on = [
+    module.master_domain.node,
+    module.worker_domain.node
+  ]
+  content = templatefile("${path.root}/templates/haproxy.tmpl",
+    {
+      node_map_masters = zipmap(
+        tolist(module.master_domain.*.address), tolist(module.master_domain.*.name)
+      ),
+      node_map_workers = zipmap(
+        tolist(module.worker_domain.*.address), tolist(module.worker_domain.*.name)
+      )
+    }
+  )
+  filename = "haproxy.cfg"
 
-# resource "local_file" "worker_ip_config" {
-#   depends_on = [ module.worker_domain ]
-#   content = join(",", module.worker_domain.*.address)
-#   filename = "worker_ip_config"
-# }
+  provisioner "file" {
+    source      = "${path.root}/haproxy.cfg"
+    destination = "/etc/haproxy/haproxy.cfg"
+    connection {
+      type        = "ssh"
+      host        = var.ha_proxy_server
+      user        = var.ha_proxy_user
+      private_key = file("~/.ssh/id_rsa")
+    }
+  }
+
+  provisioner "remote-exec" {
+    connection {
+      host        = var.ha_proxy_server
+      user        = var.ha_proxy_user
+      private_key = file("~/.ssh/id_rsa")
+    }
+    script = "${path.root}/scripts/haproxy.sh"
+  }
+}
+
+resource "local_file" "talosctl_config" {
+  depends_on = [
+    module.master_domain.node,
+    module.worker_domain.node
+  ]
+  content = templatefile("${path.root}/templates/talosctl.tmpl",
+    {
+      load_balancer = var.ha_proxy_server,
+      node_map_masters = tolist(module.master_domain.*.address),
+      node_map_workers = tolist(module.worker_domain.*.address)
+      primary_controller = module.master_domain[0].address
+    }
+  )
+  filename        = "talos_setup.sh"
+  file_permission = "755"
+}
+
+resource "null_resource" "create_cluster" {
+  depends_on = [local_file.talosctl_config]
+  provisioner "local-exec" {
+    command = "/bin/bash talos_setup.sh"
+  }
+}

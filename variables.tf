@@ -3,7 +3,7 @@ variable "system_type" {
   type        = string
 
   validation {
-    condition = var.system_type == "intel" || var.system_type == "amd"
+    condition     = var.system_type == "intel" || var.system_type == "amd"
     error_message = "Valid values for system_type are 'intel' or 'amd'"
   }
 }
@@ -79,4 +79,15 @@ variable "worker_config" {
     vcpus   = number
     sockets = number
   })
+}
+
+# HA Proxy config
+variable "ha_proxy_server" {
+  description = "IP address of server running haproxy"
+  type        = string
+}
+
+variable "ha_proxy_user" {
+  description = "User on ha_proxy_server that can modify '/etc/haproxy/haproxy.cfg' and restart haproxy.service"
+  type        = string
 }
