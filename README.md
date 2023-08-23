@@ -24,14 +24,14 @@ Automated talos cluster with system extensions
 
 Docker is mandatory on the `Client` as this projects builds a custom talos image with system extensions using the [imager](https://github.com/siderolabs/talos/pkgs/container/installer) docker image on the `Client` itself.
 
-### Create an HA Proxy Server
+## Create an HA Proxy Server
 
 I've installed `haproxy` on my Raspberry Pi. You can choose to do the same in a LXC container or a VM.
 
 You need to have passwordless SSH access to a user (from the Client node) in this node which has the permissions to modify the file `/etc/haproxy/haproxy.cfg` and permissions to run `sudo systemctl restart haproxy`. An example is covered in this [doc](docs/HA_Proxy.md).
 
 
-### Create the terraform.tfvars file
+## Create the terraform.tfvars file
 
 The variables needed to configure this script are documented in this [doc](docs/Variables.md).
 
