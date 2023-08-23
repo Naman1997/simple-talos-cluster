@@ -10,10 +10,25 @@ talosctl apply-config --insecure --nodes ${node_host} --file worker.yaml
 echo "Applied worker config to ${node_host}"
 %{endfor}
 
+# Bootstrap
 sleep 30
 talosctl bootstrap --nodes ${primary_controller} -e ${primary_controller} --talosconfig=./talosconfig
 echo "Started bootstrap process"
 sleep 30
+
+# Health check
+n=0
+retries=5
+until [ "$n" -ge "$retries" ]; do
+  if talosctl --talosconfig=./talosconfig --nodes ${primary_controller} -e ${primary_controller} health; then
+    break
+  else
+    n=$((n+1))
+    sleep 5
+  fi
+done
+
+# Update kubeconfig
 talosctl kubeconfig --nodes ${primary_controller} -e ${primary_controller} --talosconfig=./talosconfig --force
 echo "Updated kubeconfig"
-echo "Please run 'kubectl get nodes' and wait for the nodes to get ready"
+echo "Successfully created cluster"

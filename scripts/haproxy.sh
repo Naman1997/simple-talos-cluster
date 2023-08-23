@@ -1,8 +1,15 @@
 #!/bin/bash
 n=0
-until [ "$n" -ge 5 ]
-do
-   sudo systemctl restart haproxy && break  # substitute your command here
-   n=$((n+1)) 
-   sleep 15
+retries=5
+
+until [ "$n" -ge "$retries" ]; do
+   if sudo systemctl restart haproxy; then
+      exit 0
+   else
+      n=$((n+1)) 
+      sleep 5
+   fi
 done
+
+echo "All retries failed. Exiting with code 1."
+exit 1
