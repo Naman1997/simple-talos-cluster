@@ -28,12 +28,12 @@ Docker is mandatory on the `Client` as this projects builds a custom talos image
 
 I've installed `haproxy` on my Raspberry Pi. You can choose to do the same in a LXC container or a VM.
 
-You need to have passwordless SSH access to a user (from the Client node) in this node which has the permissions to modify the file `/etc/haproxy/haproxy.cfg` and permissions to run `sudo systemctl restart haproxy`. An example is covered in this [doc](https://github.com/Naman1997/talos-proxmox-cluster/blob/main/docs/HA_Proxy.md).
+You need to have passwordless SSH access to a user (from the Client node) in this node which has the permissions to modify the file `/etc/haproxy/haproxy.cfg` and permissions to run `sudo systemctl restart haproxy`. An example is covered in this [doc](docs/HA_Proxy.md).
 
 
 ### Create the terraform.tfvars file
 
-The variables needed to configure this script are documented in this [doc](https://github.com/Naman1997/talos-proxmox-cluster/blob/main/docs/Variables.md).
+The variables needed to configure this script are documented in this [doc](docs/Variables.md).
 
 ```
 cp terraform.tfvars.example terraform.tfvars
@@ -70,6 +70,6 @@ curl -k https://192.168.0.101
 
 ## Exposing your cluster to the internet with a free subdomain! (Optional)
 
-You'll need an account with duckdns - they provide you with a free subdomain that you can use to host your web services from your home internet. You'll also be needing a VPS in the cloud that can take in your traffic from a public IP address so that you don't expose your own IP address. Oracle provides a [free tier](https://www.oracle.com/in/cloud/free/) account with 4 vcpus and 24GB of memory. I'll be using this to create a VM. To expose the traffic properly, follow this [guide](https://github.com/Naman1997/simple-fcos-cluster/blob/main/docs/Wireguard_Setup.md).
+You'll need an account with duckdns - they provide you with a free subdomain that you can use to host your web services from your home internet. You'll also be needing a VPS in the cloud that can take in your traffic from a public IP address so that you don't expose your own IP address. Oracle provides a [free tier](https://www.oracle.com/in/cloud/free/) account with 4 vcpus and 24GB of memory. I'll be using this to create a VM. To expose the traffic properly, follow this [guide](docs/Wireguard_Setup.md).
 
 For this setup, we'll be installing wireguard on the VPS and the node that is running haproxy. The traffic flow is shown in the image below.
