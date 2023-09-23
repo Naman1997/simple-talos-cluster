@@ -56,6 +56,7 @@ terraform apply --auto-approve
 Since HAProxy is load-balancing ports 80 and 443 (of worker nodes), we can deploy nginx-controller such that it uses those ports as an external load balancer IP.
 
 ```
+kubectl label ns ingress-nginx pod-security.kubernetes.io/enforce=privileged
 # Update the IP address in the controller yaml
 vim ./nginx-example/nginx-controller.yaml
 helm install ingress-nginx ingress-nginx/ingress-nginx -n ingress-nginx --values ./nginx-example/nginx-controller.yaml --create-namespace
