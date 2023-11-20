@@ -8,11 +8,11 @@ terraform {
 }
 
 resource "proxmox_virtual_environment_vm" "node" {
-  name          = var.name
-  on_boot       = var.autostart
-  node_name     = var.target_node
-  bios          = "ovmf"
-  scsi_hardware = "virtio-scsi-pci"
+  name                = var.name
+  on_boot             = var.autostart
+  node_name           = var.target_node
+  bios                = "ovmf"
+  scsi_hardware       = "virtio-scsi-pci"
   timeout_shutdown_vm = 300
 
   memory {
