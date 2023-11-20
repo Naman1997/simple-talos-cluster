@@ -22,7 +22,7 @@ jobs:
     steps:
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     # Copy the terraform.tfvars.example file for variables
     - name: Create terraform.tfvars
