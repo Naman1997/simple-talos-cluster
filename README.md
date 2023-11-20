@@ -45,7 +45,6 @@ vim terraform.tfvars
 ```
 terraform init -upgrade
 terraform plan
-# WARNING: The next command will override ~/.kube/config. Make a backup if needed.
 terraform apply --auto-approve
 ```
 

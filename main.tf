@@ -133,7 +133,7 @@ module "master_domain" {
 
   source         = "./modules/domain"
   count          = var.MASTER_COUNT
-  name           = format("talos-master%s", count.index)
+  name           = format("talos-master-%s", count.index)
   memory         = var.master_config.memory
   vcpus          = var.master_config.vcpus
   sockets        = var.master_config.sockets
@@ -148,7 +148,7 @@ module "worker_domain" {
 
   source         = "./modules/domain"
   count          = var.WORKER_COUNT
-  name           = format("talos-worker%s", count.index)
+  name           = format("talos-worker-%s", count.index)
   memory         = var.worker_config.memory
   vcpus          = var.worker_config.vcpus
   sockets        = var.worker_config.sockets
