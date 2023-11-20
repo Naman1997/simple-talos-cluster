@@ -34,14 +34,6 @@ frontend controller
     bind :50001
     mode tcp
     default_backend controller_backend
-frontend httpTraffic
-    bind :80
-    mode tcp
-    default_backend httpTraffic_backend
-frontend httpsTraffic
-    bind :443
-    mode tcp
-    default_backend httpsTraffic_backend
 
 backend kubeAPI_backend
     mode tcp
@@ -57,16 +49,6 @@ backend controller_backend
     mode tcp
     %{ for node_host, node_hostname in node_map_masters ~}
     server ${node_hostname} ${node_host}:50001 check check-ssl verify none
-    %{endfor}
-backend httpTraffic_backend
-    mode tcp
-    %{ for node_host, node_hostname in node_map_workers ~}
-    server ${node_hostname} ${node_host}:80 check check-ssl verify none
-    %{endfor}
-backend httpsTraffic_backend
-    mode tcp
-    %{ for node_host, node_hostname in node_map_workers ~}
-    server ${node_hostname} ${node_host}:443 check check-ssl verify none
     %{endfor}
 
 listen stats

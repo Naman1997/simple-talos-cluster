@@ -6,17 +6,17 @@ terraform {
       version = "~> 3.0.2"
     }
     proxmox = {
-      source  = "telmate/proxmox"
-      version = "2.9.14"
+      source  = "bpg/proxmox"
+      version = "0.38.1"
     }
   }
 }
 
 provider "proxmox" {
-  pm_api_url      = var.PROXMOX_API_ENDPOINT
-  pm_user         = "${var.PROXMOX_USERNAME}@pam"
-  pm_password     = var.PROXMOX_PASSWORD
-  pm_tls_insecure = true
+  endpoint = var.PROXMOX_API_ENDPOINT
+  username = "${var.PROXMOX_USERNAME}@pam"
+  password = var.PROXMOX_PASSWORD
+  insecure = true
 }
 
 data "external" "versions" {
@@ -202,9 +202,9 @@ resource "local_file" "talosctl_config" {
   ]
   content = templatefile("${path.root}/templates/talosctl.tmpl",
     {
-      load_balancer = var.ha_proxy_server,
-      node_map_masters = tolist(module.master_domain.*.address),
-      node_map_workers = tolist(module.worker_domain.*.address)
+      load_balancer      = var.ha_proxy_server,
+      node_map_masters   = tolist(module.master_domain.*.address),
+      node_map_workers   = tolist(module.worker_domain.*.address)
       primary_controller = module.master_domain[0].address
     }
   )
