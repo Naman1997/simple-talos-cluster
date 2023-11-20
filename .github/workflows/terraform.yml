@@ -5,12 +5,19 @@ on:
     branches:
     - main
   pull_request:
+    branches:
+    - main
 
 jobs:
   terraform:
     name: 'Terraform'
     runs-on: ubuntu-latest
     environment: production
+
+    permissions:
+      # Give the default GITHUB_TOKEN write permission to commit and push the
+      # added or changed files to the repository.
+      contents: write
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
     defaults:
@@ -20,7 +27,7 @@ jobs:
     steps:
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     # Copy the terraform.tfvars.example file for variables
     - name: Create terraform.tfvars
@@ -30,10 +37,20 @@ jobs:
     - name: Create random SSH keys
       run: mkdir ~/.ssh && touch ~/.ssh/id_rsa && touch ~/.ssh/id_rsa.pub
 
-    # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+    # Initialize Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
       run: terraform init
 
-    # Generates an execution plan for Terraform
+    # Validate Terraform files
     - name: Terraform Validate
       run: terraform validate
+    
+    # Format Terraform files
+    - name: Terraform Format
+      run: terraform fmt --recursive
+
+    # Commit files
+    - name: Commit and Push
+      uses: stefanzweifel/git-auto-commit-action@v5.0.0
+      with:
+        commit_message: 'Formatted terraform files'

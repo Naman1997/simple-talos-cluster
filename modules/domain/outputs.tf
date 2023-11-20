@@ -4,6 +4,6 @@ output "address" {
 }
 
 output "name" {
-  value       = proxmox_vm_qemu.node.name
+  value       = proxmox_virtual_environment_vm.node.name
   description = "Name of the node"
 }

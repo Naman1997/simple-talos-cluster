@@ -16,11 +16,9 @@ Automated talos cluster with system extensions
 | [talosctl](https://www.talos.dev/latest/learn-more/talosctl/) | Client |
 | [Terraform](https://www.terraform.io/) | Client |
 | [HAproxy](http://www.haproxy.org/) | Raspberry Pi |
-| [Wireguard](https://www.wireguard.com/) (Optional) | Raspberry Pi & Cloud VPS |
-| [Docker](https://docs.docker.com/) (Optional) | Cloud VPS |
 | [Docker](https://docs.docker.com/) | Client |
 
-`Client` refers to the node that will be executing `terraform apply` to create the cluster. The `Raspberry Pi` can be replaced with a VM or a LXC container. The items marked `Optional` are needed only when you want to expose your kubernetes services to the internet via WireGuard.
+`Client` refers to the node that will be executing `terraform apply` to create the cluster. The `Raspberry Pi` can be replaced with a VM or a LXC container.
 
 Docker is mandatory on the `Client` as this projects builds a custom talos image with system extensions using the [imager](https://github.com/siderolabs/talos/pkgs/container/installer) docker image on the `Client` itself.
 
@@ -69,8 +67,9 @@ k create -f ./nginx-example/ingress.yaml
 curl -k https://192.168.0.101
 ```
 
-## Exposing your cluster to the internet with a free subdomain! (Optional)
+## Expose your cluster to the internet (Optional)
 
-You'll need an account with duckdns - they provide you with a free subdomain that you can use to host your web services from your home internet. You'll also be needing a VPS in the cloud that can take in your traffic from a public IP address so that you don't expose your own IP address. Oracle provides a [free tier](https://www.oracle.com/in/cloud/free/) account with 4 vcpus and 24GB of memory. I'll be using this to create a VM. To expose the traffic properly, follow this [guide](docs/Wireguard_Setup.md).
+It is possible to expose your cluster to the internet over a small vps even if both your vps and your public ips are dynamic. This is possible by setting up dynamic dns for both your internal network and the vps using something like duckdns
+and a docker container to regularly monitor the IP addresses on both ends. A connection can be then made using wireguard to traverse the network between these 2 nodes. This way you can hide your public IP while exposing services to the internet.
 
-For this setup, we'll be installing wireguard on the VPS and the node that is running haproxy. The traffic flow is shown in the image below.
+Project Link: [wireguard-k8s-lb](https://github.com/Naman1997/wireguard-k8s-lb)
