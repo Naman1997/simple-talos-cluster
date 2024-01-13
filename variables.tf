@@ -40,13 +40,14 @@ variable "TARGET_NODE" {
 }
 
 # Cluster config
+variable "cluster_name" {
+  description = "Cluster name to be used for kubeconfig"
+  type        = string
+}
+
 variable "MASTER_COUNT" {
   description = "Number of masters to create (Should be an odd number)"
   type        = number
-  validation {
-    condition     = var.MASTER_COUNT % 2 == 1
-    error_message = "Number of master nodes must be always odd. Learn more here: https://discuss.kubernetes.io/t/high-availability-host-numbers/13143/2"
-  }
   validation {
     condition     = var.MASTER_COUNT != 0
     error_message = "Number of master nodes cannot be 0"
@@ -79,15 +80,4 @@ variable "worker_config" {
     vcpus   = number
     sockets = number
   })
-}
-
-# HA Proxy config
-variable "ha_proxy_server" {
-  description = "IP address of server running haproxy"
-  type        = string
-}
-
-variable "ha_proxy_user" {
-  description = "User on ha_proxy_server that can modify '/etc/haproxy/haproxy.cfg' and restart haproxy.service"
-  type        = string
 }

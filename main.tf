@@ -51,7 +51,7 @@ resource "docker_image" "imager" {
 
 resource "null_resource" "cleanup" {
   provisioner "local-exec" {
-    command     = "mkdir -p output && rm -f talos_setup.sh haproxy.cfg talosconfig worker.yaml controlplane.yaml"
+    command     = "mkdir -p output && rm -f talos_setup.sh talosconfig worker.yaml controlplane.yaml output/*"
     working_dir = path.root
   }
 }
@@ -157,44 +157,6 @@ module "worker_domain" {
   target_node    = var.TARGET_NODE
 }
 
-resource "local_file" "haproxy_config" {
-  depends_on = [
-    module.master_domain.node,
-    module.worker_domain.node
-  ]
-  content = templatefile("${path.root}/templates/haproxy.tmpl",
-    {
-      node_map_masters = zipmap(
-        tolist(module.master_domain.*.address), tolist(module.master_domain.*.name)
-      ),
-      node_map_workers = zipmap(
-        tolist(module.worker_domain.*.address), tolist(module.worker_domain.*.name)
-      )
-    }
-  )
-  filename = "haproxy.cfg"
-
-  provisioner "file" {
-    source      = "${path.root}/haproxy.cfg"
-    destination = "/etc/haproxy/haproxy.cfg"
-    connection {
-      type        = "ssh"
-      host        = var.ha_proxy_server
-      user        = var.ha_proxy_user
-      private_key = file("~/.ssh/id_rsa")
-    }
-  }
-
-  provisioner "remote-exec" {
-    connection {
-      host        = var.ha_proxy_server
-      user        = var.ha_proxy_user
-      private_key = file("~/.ssh/id_rsa")
-    }
-    script = "${path.root}/scripts/haproxy.sh"
-  }
-}
-
 resource "local_file" "talosctl_config" {
   depends_on = [
     module.master_domain.node,
@@ -202,10 +164,10 @@ resource "local_file" "talosctl_config" {
   ]
   content = templatefile("${path.root}/templates/talosctl.tmpl",
     {
-      load_balancer      = var.ha_proxy_server,
       node_map_masters   = tolist(module.master_domain.*.address),
       node_map_workers   = tolist(module.worker_domain.*.address)
-      primary_controller = module.master_domain[0].address
+      primary_controller = module.master_domain[0].address,
+      cluster_name = var.cluster_name
     }
   )
   filename        = "talos_setup.sh"

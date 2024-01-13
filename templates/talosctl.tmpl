@@ -1,5 +1,5 @@
 #!/bin/bash
-talosctl machineconfig gen mycluster https://${load_balancer}:6443
+talosctl machineconfig gen ${cluster_name} https://${primary_controller}:6443
 sleep 3
 %{ for node_host in node_map_masters ~}
 talosctl apply-config --insecure --nodes ${node_host} --file controlplane.yaml

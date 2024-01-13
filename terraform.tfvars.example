@@ -23,7 +23,3 @@ worker_config = {
   vcpus   = 2
   sockets = 1
 }
-
-# HA Proxy config
-ha_proxy_server = "192.168.0.101"
-ha_proxy_user   = "wireproxy"

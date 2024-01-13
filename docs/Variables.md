@@ -14,5 +14,3 @@
 | autostart | Enable/Disable VM start on host bootup |
 | master_config | Kubernetes master config |
 | worker_config | Kubernetes worker config |
-| ha_proxy_server | IP address of server running haproxy |
-| ha_proxy_user | User on ha_proxy_server that can modify '/etc/haproxy/haproxy.cfg' and restart haproxy.service |

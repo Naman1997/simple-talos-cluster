@@ -38,7 +38,6 @@ terraform.rc
 output/*
 terraform.tfvars
 controlplane.yaml
-haproxy.cfg
 talos_setup.sh
 talosconfig
 worker.yaml
