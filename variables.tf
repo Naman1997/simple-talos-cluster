@@ -39,14 +39,20 @@ variable "TARGET_NODE" {
   type        = string
 }
 
+variable "SSH_KEY" {
+  description = "Path to SSH key to be used for copying the talos image and creating a template"
+  type        = string
+}
+
 # Cluster config
+variable "cluster_name" {
+  description = "Cluster name to be used for kubeconfig"
+  type        = string
+}
+
 variable "MASTER_COUNT" {
-  description = "Number of masters to create (Should be an odd number)"
+  description = "Number of masters to create"
   type        = number
-  validation {
-    condition     = var.MASTER_COUNT % 2 == 1
-    error_message = "Number of master nodes must be always odd. Learn more here: https://discuss.kubernetes.io/t/high-availability-host-numbers/13143/2"
-  }
   validation {
     condition     = var.MASTER_COUNT != 0
     error_message = "Number of master nodes cannot be 0"
@@ -89,5 +95,10 @@ variable "ha_proxy_server" {
 
 variable "ha_proxy_user" {
   description = "User on ha_proxy_server that can modify '/etc/haproxy/haproxy.cfg' and restart haproxy.service"
+  type        = string
+}
+
+variable "ha_proxy_key" {
+  description = "SSH key used to log in ha_proxy_server"
   type        = string
 }

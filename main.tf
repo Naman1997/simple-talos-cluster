@@ -93,7 +93,7 @@ resource "null_resource" "copy_image" {
     connection {
       host        = var.PROXMOX_IP
       user        = var.PROXMOX_USERNAME
-      private_key = file("~/.ssh/id_rsa")
+      private_key = file(var.SSH_KEY)
     }
 
     inline = [
@@ -109,7 +109,7 @@ resource "null_resource" "copy_image" {
       type        = "ssh"
       host        = var.PROXMOX_IP
       user        = var.PROXMOX_USERNAME
-      private_key = file("~/.ssh/id_rsa")
+      private_key = file(var.SSH_KEY)
     }
   }
 }
@@ -121,7 +121,7 @@ resource "null_resource" "create_template" {
     connection {
       host        = var.PROXMOX_IP
       user        = var.PROXMOX_USERNAME
-      private_key = file("~/.ssh/id_rsa")
+      private_key = file(var.SSH_KEY)
     }
     script = "${path.root}/scripts/template.sh"
   }
@@ -181,7 +181,7 @@ resource "local_file" "haproxy_config" {
       type        = "ssh"
       host        = var.ha_proxy_server
       user        = var.ha_proxy_user
-      private_key = file("~/.ssh/id_rsa")
+      private_key = file(var.ha_proxy_key)
     }
   }
 
@@ -189,7 +189,7 @@ resource "local_file" "haproxy_config" {
     connection {
       host        = var.ha_proxy_server
       user        = var.ha_proxy_user
-      private_key = file("~/.ssh/id_rsa")
+      private_key = file(var.ha_proxy_key)
     }
     script = "${path.root}/scripts/haproxy.sh"
   }

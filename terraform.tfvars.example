@@ -8,8 +8,10 @@ PROXMOX_PASSWORD     = "password"
 PROXMOX_IP           = "192.168.0.100"
 DEFAULT_BRIDGE       = "vmbr0"
 TARGET_NODE          = "pve"
+SSH_KEY              = "~/.ssh/id_rsa"
 
 # Cluster config
+cluster_name = "talos-cluster-1"
 MASTER_COUNT = 1
 WORKER_COUNT = 1
 autostart    = true
@@ -27,3 +29,4 @@ worker_config = {
 # HA Proxy config
 ha_proxy_server = "192.168.0.101"
 ha_proxy_user   = "wireproxy"
+ha_proxy_key    = "~/.ssh/id_rsa"
