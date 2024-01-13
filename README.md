@@ -24,6 +24,8 @@ Docker is mandatory on the `Client` as this projects builds a custom talos image
 
 ## Create an HA Proxy Server
 
+You can use the [no-lb](https://github.com/Naman1997/simple-talos-cluster/tree/no-lb) branch in case you do not want to use an external load-balancer. This branch uses the 1st master node that gets created as the cluster endpoint.
+
 I've installed `haproxy` on my Raspberry Pi. You can choose to do the same in a LXC container or a VM.
 
 You need to have passwordless SSH access to a user (from the Client node) in this node which has the permissions to modify the file `/etc/haproxy/haproxy.cfg` and permissions to run `sudo systemctl restart haproxy`. An example is covered in this [doc](docs/HA_Proxy.md).
