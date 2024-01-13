@@ -51,7 +51,7 @@ resource "docker_image" "imager" {
 
 resource "null_resource" "cleanup" {
   provisioner "local-exec" {
-    command     = "mkdir -p output && rm -f talos_setup.sh talosconfig worker.yaml controlplane.yaml output/*"
+    command     = "mkdir -p output && rm -f talos_setup.sh talosconfig worker.yaml controlplane.yaml"
     working_dir = path.root
   }
 }
@@ -93,7 +93,7 @@ resource "null_resource" "copy_image" {
     connection {
       host        = var.PROXMOX_IP
       user        = var.PROXMOX_USERNAME
-      private_key = file("~/.ssh/id_rsa")
+      private_key = file(var.SSH_KEY)
     }
 
     inline = [
@@ -109,7 +109,7 @@ resource "null_resource" "copy_image" {
       type        = "ssh"
       host        = var.PROXMOX_IP
       user        = var.PROXMOX_USERNAME
-      private_key = file("~/.ssh/id_rsa")
+      private_key = file(var.SSH_KEY)
     }
   }
 }
@@ -121,7 +121,7 @@ resource "null_resource" "create_template" {
     connection {
       host        = var.PROXMOX_IP
       user        = var.PROXMOX_USERNAME
-      private_key = file("~/.ssh/id_rsa")
+      private_key = file(var.SSH_KEY)
     }
     script = "${path.root}/scripts/template.sh"
   }
@@ -167,7 +167,7 @@ resource "local_file" "talosctl_config" {
       node_map_masters   = tolist(module.master_domain.*.address),
       node_map_workers   = tolist(module.worker_domain.*.address)
       primary_controller = module.master_domain[0].address,
-      cluster_name = var.cluster_name
+      cluster_name       = var.cluster_name
     }
   )
   filename        = "talos_setup.sh"

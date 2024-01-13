@@ -41,6 +41,9 @@ terraform plan
 terraform apply --auto-approve
 ```
 
+## Notes
+- This branch does not include an external load-balancer to simplify setup. In case you need an external load-balancer, consider using the [main](https://github.com/Naman1997/simple-talos-cluster/tree/main) branch.
+
 ## Expose your cluster to the internet (Optional)
 
 It is possible to expose your cluster to the internet over a small vps even if both your vps and your public ips are dynamic. This is possible by setting up dynamic dns for the vps using something like duckdns and a docker container to regularly monitor the IP addresse of the VPS. A connection can be then made using wireguard to traverse the network between these 2 nodes. This way you can hide your public IP while exposing services to the internet.

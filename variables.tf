@@ -39,6 +39,11 @@ variable "TARGET_NODE" {
   type        = string
 }
 
+variable "SSH_KEY" {
+  description = "Path to SSH key to be used for copying the talos image and creating a template"
+  type        = string
+}
+
 # Cluster config
 variable "cluster_name" {
   description = "Cluster name to be used for kubeconfig"
@@ -46,7 +51,7 @@ variable "cluster_name" {
 }
 
 variable "MASTER_COUNT" {
-  description = "Number of masters to create (Should be an odd number)"
+  description = "Number of masters to create"
   type        = number
   validation {
     condition     = var.MASTER_COUNT != 0

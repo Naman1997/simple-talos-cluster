@@ -8,6 +8,7 @@ PROXMOX_PASSWORD     = "password"
 PROXMOX_IP           = "192.168.0.100"
 DEFAULT_BRIDGE       = "vmbr0"
 TARGET_NODE          = "pve"
+SSH_KEY              = "~/.ssh/id_rsa"
 
 # Cluster config
 MASTER_COUNT = 1
