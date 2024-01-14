@@ -2,7 +2,7 @@ terraform {
   required_providers {
     proxmox = {
       source  = "bpg/proxmox"
-      version = "0.38.1"
+      version = "0.43.2"
     }
   }
 }
@@ -33,6 +33,7 @@ resource "proxmox_virtual_environment_vm" "node" {
   clone {
     retries = 3
     vm_id   = 8000
+    full    = true
   }
 
   network_device {
