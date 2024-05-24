@@ -84,4 +84,4 @@ Currently this only happens if you're running this inside on a proxmox node that
 
 This project uses `arp-scan` to scan the local network using arp requests. In case your user does not have proper permissions to scan using the `virbr0` interface, then the talos VMs will not be found.
 
-To fix this, either you can update the permissions for that socket interface or you can just use `sudo`, in case you opt for solution 2, make sure to run the `talosctl kubeconfig` generated for you in `talos_setup.sh` after `terraform apply` finishes.
+To fix this, either you can update the permissions for that socket interface or you can just use `sudo`, in case you opt for solution 2, make sure to run the `talosctl kubeconfig` command generated for you in `talos_setup.sh` after `terraform apply` finishes.
