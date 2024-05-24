@@ -76,7 +76,9 @@ and a docker container to regularly monitor the IP addresses on both ends. A con
 Project Link: [wireguard-k8s-lb](https://github.com/Naman1997/wireguard-k8s-lb)
 
 
-## Known Issue with Proxmox in KVM
+## Known Issue(s)
+
+### Proxmox in KVM
 
 Currently this only happens if you're running this inside on a proxmox node that itself is virtualized inside kvm. This is highly unlikely, but I'll make a note of this for anyone stuck on this.
 
