@@ -32,3 +32,8 @@ variable "target_node" {
   description = "Target node name in proxmox"
   type        = string
 }
+
+variable "scan_interface" {
+  description = "Interface that you wish to scan for finding the talos VMs"
+  type        = string
+}

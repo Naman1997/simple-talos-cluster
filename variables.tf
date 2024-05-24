@@ -102,3 +102,8 @@ variable "ha_proxy_key" {
   description = "SSH key used to log in ha_proxy_server"
   type        = string
 }
+
+variable "INTERFACE_TO_SCAN" {
+  description = "Interface that you wish to scan for finding the talos VMs. Leave this empty for default value."
+  type        = string
+}

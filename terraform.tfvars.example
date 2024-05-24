@@ -8,7 +8,7 @@ PROXMOX_PASSWORD     = "password"
 PROXMOX_IP           = "192.168.0.100"
 DEFAULT_BRIDGE       = "vmbr0"
 TARGET_NODE          = "pve"
-SSH_KEY              = "~/.ssh/id_rsa"
+SSH_KEY              = "/home/user/.ssh/id_rsa"
 
 # Cluster config
 cluster_name = "talos-cluster-1"
@@ -29,4 +29,9 @@ worker_config = {
 # HA Proxy config
 ha_proxy_server = "192.168.0.101"
 ha_proxy_user   = "wireproxy"
-ha_proxy_key    = "~/.ssh/id_rsa"
+ha_proxy_key    = "/home/user/.ssh/id_rsa"
+
+# Leave this empty if you are not sure/have a single NIC
+# Change this to virbr0 if you're running proxmox inside a KVM VM
+# You may need to use sudo for terrafrom apply due to this
+INTERFACE_TO_SCAN=""

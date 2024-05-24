@@ -6,7 +6,12 @@ IP_REGEX='^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0
 
 
 for ((i = 1; i <= MAX_RETRIES; i++)); do
-  address=$(arp-scan --localnet | grep "$1" | awk ' { printf $1 } ')
+  if [ -n "$2" ]; then
+    address=$(arp-scan --localnet -I "$2" | grep "$1" | awk '{ printf $1 }')
+  else
+    address=$(arp-scan --localnet | grep "$1" | awk '{ printf $1 }')
+  fi
+
   
   if [[ -n "$address" && "$address" =~ $IP_REGEX ]]; then
     jq -n --arg address "$address" '{"address":$address}'

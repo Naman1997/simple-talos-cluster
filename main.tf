@@ -140,6 +140,7 @@ module "master_domain" {
   autostart      = var.autostart
   default_bridge = var.DEFAULT_BRIDGE
   target_node    = var.TARGET_NODE
+  scan_interface = var.INTERFACE_TO_SCAN
 }
 
 module "worker_domain" {
@@ -155,6 +156,7 @@ module "worker_domain" {
   autostart      = var.autostart
   default_bridge = var.DEFAULT_BRIDGE
   target_node    = var.TARGET_NODE
+  scan_interface = var.INTERFACE_TO_SCAN
 }
 
 resource "local_file" "haproxy_config" {

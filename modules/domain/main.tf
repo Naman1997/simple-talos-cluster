@@ -45,5 +45,5 @@ resource "proxmox_virtual_environment_vm" "node" {
 data "external" "address" {
   depends_on  = [proxmox_virtual_environment_vm.node]
   working_dir = path.root
-  program     = ["bash", "scripts/ip.sh", "${lower(proxmox_virtual_environment_vm.node.network_device[0].mac_address)}"]
+  program     = ["bash", "scripts/ip.sh", "${lower(proxmox_virtual_environment_vm.node.network_device[0].mac_address)}", "${var.scan_interface}"]
 }
