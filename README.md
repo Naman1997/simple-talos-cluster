@@ -74,3 +74,12 @@ It is possible to expose your cluster to the internet over a small vps even if b
 and a docker container to regularly monitor the IP addresses on both ends. A connection can be then made using wireguard to traverse the network between these 2 nodes. This way you can hide your public IP while exposing services to the internet.
 
 Project Link: [wireguard-k8s-lb](https://github.com/Naman1997/wireguard-k8s-lb)
+
+
+## Known Issue with Proxmox in KVM
+
+Currently this only happens if you're running this inside on a proxmox node that itself is virtualized inside kvm. This is highly unlikely, but I'll make a note of this for anyone stuck on this.
+
+This project uses `arp-scan` to scan the local network using arp requests. In case your user does not have proper permissions to scan using the `virbr0` interface, then the talos VMs will not be found.
+
+To fix this, either you can update the permissions for that socket interface or you can just use `sudo`, in case you opt for solution 2, make sure to run the `talosctl kubeconfig` generated for you in `talos_setup.sh` after `terraform apply` finishes.
