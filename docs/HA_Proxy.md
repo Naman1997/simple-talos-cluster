@@ -32,6 +32,7 @@ cat ~/.ssh/authorized_keys
 # Copy the value in a clipboard
 sudo su wireproxy
 # You're now logged in as wireproxy user
+mkdir -p ~/.ssh
 vim ~/.ssh/authorized_keys
 # Paste the same key here
 # Logout from the Raspberry Pi
