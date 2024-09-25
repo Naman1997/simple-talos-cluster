@@ -1,6 +1,6 @@
 BOOTDISK=scsi0
 qm destroy 8000 || true
-xz -v -d talos/talos.raw.xz
+zstd --decompress talos/talos.raw.zst -o talos/talos.raw
 sleep 3
 qm create 8000 --memory 2048 --net0 virtio,bridge=vmbr0 --agent 1 --cores 2 --sockets 1 --cpu cputype=x86-64-v2
 qm importdisk 8000 talos/talos.raw local-lvm
