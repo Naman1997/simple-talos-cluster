@@ -104,8 +104,8 @@ resource "null_resource" "copy_image" {
   }
 
   provisioner "file" {
-    source      = "${path.root}/output/metal-amd64.raw.xz"
-    destination = "/root/talos/talos.raw.xz"
+    source      = "${path.root}/output/metal-amd64.raw.zst"
+    destination = "/root/talos/talos.raw.zst"
     connection {
       type        = "ssh"
       host        = var.PROXMOX_IP
