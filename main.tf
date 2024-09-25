@@ -7,7 +7,7 @@ terraform {
     }
     proxmox = {
       source  = "bpg/proxmox"
-      version = "0.57.1"
+      version = "0.65.0"
     }
   }
 }
@@ -24,6 +24,7 @@ data "external" "versions" {
 }
 
 locals {
+  ha_proxy_user       = "ubuntu"
   qemu_ga_version     = data.external.versions.result["qemu_ga_version"]
   amd_ucode_version   = data.external.versions.result["amd_ucode_version"]
   intel_ucode_version = data.external.versions.result["intel_ucode_version"]
@@ -159,10 +160,19 @@ module "worker_domain" {
   scan_interface = var.INTERFACE_TO_SCAN
 }
 
+module "proxy" {
+  source         = "./modules/proxy"
+  ha_proxy_user  = local.ha_proxy_user
+  DEFAULT_BRIDGE = var.DEFAULT_BRIDGE
+  TARGET_NODE    = var.TARGET_NODE
+  ssh_key        = join("", [var.SSH_KEY, ".pub"])
+}
+
 resource "local_file" "haproxy_config" {
   depends_on = [
     module.master_domain.node,
-    module.worker_domain.node
+    module.worker_domain.node,
+    module.proxy.node
   ]
   content = templatefile("${path.root}/templates/haproxy.tmpl",
     {
@@ -181,17 +191,17 @@ resource "local_file" "haproxy_config" {
     destination = "/etc/haproxy/haproxy.cfg"
     connection {
       type        = "ssh"
-      host        = var.ha_proxy_server
-      user        = var.ha_proxy_user
-      private_key = file(var.ha_proxy_key)
+      host        = module.proxy.proxy_ipv4_address
+      user        = local.ha_proxy_user
+      private_key = file(var.SSH_KEY)
     }
   }
 
   provisioner "remote-exec" {
     connection {
-      host        = var.ha_proxy_server
-      user        = var.ha_proxy_user
-      private_key = file(var.ha_proxy_key)
+      host        = module.proxy.proxy_ipv4_address
+      user        = local.ha_proxy_user
+      private_key = file(var.SSH_KEY)
     }
     script = "${path.root}/scripts/haproxy.sh"
   }
@@ -200,11 +210,13 @@ resource "local_file" "haproxy_config" {
 resource "local_file" "talosctl_config" {
   depends_on = [
     module.master_domain.node,
-    module.worker_domain.node
+    module.worker_domain.node,
+    module.proxy.node,
+    resource.local_file.haproxy_config
   ]
   content = templatefile("${path.root}/templates/talosctl.tmpl",
     {
-      load_balancer      = var.ha_proxy_server,
+      load_balancer      = module.proxy.proxy_ipv4_address,
       node_map_masters   = tolist(module.master_domain.*.address),
       node_map_workers   = tolist(module.worker_domain.*.address)
       primary_controller = module.master_domain[0].address
