@@ -26,11 +26,6 @@ worker_config = {
   sockets = 1
 }
 
-# HA Proxy config
-ha_proxy_server = "192.168.0.101"
-ha_proxy_user   = "wireproxy"
-ha_proxy_key    = "/home/user/.ssh/id_rsa"
-
 # Leave this empty if you are not sure/have a single NIC
 # Change this to virbr0 if you're running proxmox inside a KVM VM
 # You may need to use sudo for terrafrom apply due to this

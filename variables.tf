@@ -87,22 +87,6 @@ variable "worker_config" {
   })
 }
 
-# HA Proxy config
-variable "ha_proxy_server" {
-  description = "IP address of server running haproxy"
-  type        = string
-}
-
-variable "ha_proxy_user" {
-  description = "User on ha_proxy_server that can modify '/etc/haproxy/haproxy.cfg' and restart haproxy.service"
-  type        = string
-}
-
-variable "ha_proxy_key" {
-  description = "SSH key used to log in ha_proxy_server"
-  type        = string
-}
-
 variable "INTERFACE_TO_SCAN" {
   description = "Interface that you wish to scan for finding the talos VMs. Leave this empty for default value."
   type        = string
