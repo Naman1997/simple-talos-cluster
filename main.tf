@@ -34,13 +34,15 @@ locals {
     "--system-extension-image",
     "ghcr.io/siderolabs/qemu-guest-agent:${local.qemu_ga_version}",
     "--system-extension-image",
-    "ghcr.io/siderolabs/intel-ucode:${local.amd_ucode_version}"
+    "ghcr.io/siderolabs/amd-ucode:${local.amd_ucode_version}",
+    "--secureboot-include-well-known-certs"
     ] : [
     "metal",
     "--system-extension-image",
     "ghcr.io/siderolabs/qemu-guest-agent:${local.qemu_ga_version}",
     "--system-extension-image",
-    "ghcr.io/siderolabs/intel-ucode:${local.intel_ucode_version}"
+    "ghcr.io/siderolabs/intel-ucode:${local.intel_ucode_version}",
+    "--secureboot-include-well-known-certs"
   ]
 }
 
