@@ -48,10 +48,6 @@ resource "proxmox_virtual_environment_download_file" "ubuntu_cloud_image" {
   datastore_id = "local"
   node_name    = var.TARGET_NODE
   url          = "https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img"
-
-  lifecycle {
-    prevent_destroy = true
-  }
 }
 
 resource "proxmox_virtual_environment_vm" "node" {
