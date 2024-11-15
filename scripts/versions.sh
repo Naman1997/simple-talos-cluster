@@ -104,8 +104,3 @@ jq -n --arg intel_ucode_version "$intel_ucode_version"\
  --arg qemu_ga_version "$qemu_ga_version" \
  --arg imager_version "$imager_version" \
  '{"intel_ucode_version":$intel_ucode_version, "amd_ucode_version":$amd_ucode_version, "qemu_ga_version":$qemu_ga_version, "imager_version":$imager_version}'
-
-# jq -n --arg intel_ucode_version "$intel_ucode_version"\
-#  --arg amd_ucode_version "$amd_ucode_version" \
-#  --arg qemu_ga_version "$qemu_ga_version" \
-#  '{"intel_ucode_version":$intel_ucode_version, "amd_ucode_version":$amd_ucode_version, "qemu_ga_version":$qemu_ga_version, "imager_version": "v1.5.0"}'
