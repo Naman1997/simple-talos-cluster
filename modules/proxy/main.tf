@@ -2,7 +2,7 @@ terraform {
   required_providers {
     proxmox = {
       source  = "bpg/proxmox"
-      version = "0.65.0"
+      version = "0.66.3"
     }
   }
 }
@@ -44,10 +44,14 @@ resource "proxmox_virtual_environment_file" "cloud_config" {
 }
 
 resource "proxmox_virtual_environment_download_file" "ubuntu_cloud_image" {
-  content_type = "iso"
-  datastore_id = "local"
-  node_name    = var.TARGET_NODE
-  url          = "https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img"
+  content_type       = "iso"
+  datastore_id       = "local"
+  node_name          = var.TARGET_NODE
+  url                = "https://cloud-images.ubuntu.com/oracular/20241109/oracular-server-cloudimg-amd64.img"
+  checksum           = "05bbfe57d7701c685d8c65f4d34cebe947bc89e3509c4d8a2b9c77f39e91f3ca"
+  checksum_algorithm = "sha256"
+  upload_timeout     = 1000
+  overwrite          = false
 }
 
 resource "proxmox_virtual_environment_vm" "node" {
