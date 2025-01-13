@@ -3,11 +3,11 @@ terraform {
   required_providers {
     docker = {
       source  = "kreuzwerker/docker"
-      version = "~> 3.0.2"
+      version = "3.0.2"
     }
     proxmox = {
       source  = "bpg/proxmox"
-      version = "0.66.3"
+      version = "0.69.1"
     }
   }
 }

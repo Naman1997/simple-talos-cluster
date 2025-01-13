@@ -40,8 +40,14 @@ cp terraform.tfvars.example terraform.tfvars
 vim terraform.tfvars
 ```
 
+## Enable the Snippets feature in Proxmox
 
-## Creating the cluster
+In the proxmox web portal, go to `Datacenter` > `Storage` > Click on `local` > `Edit` > Under `Content` choose `Snippets` > Click on `OK` to save.
+
+![local directory](image.png)
+
+
+## Create the cluster
 
 ```
 terraform init -upgrade
@@ -65,4 +71,4 @@ Currently this only happens if you're running this inside on a proxmox node that
 
 This project uses `arp-scan` to scan the local network using arp requests. In case your user does not have proper permissions to scan using the `virbr0` interface, then the talos VMs will not be found.
 
-To fix this, either you can update the permissions for that socket interface or you can just use `sudo`, in case you opt for solution 2, make sure to run the `talosctl kubeconfig` command generated for you in `talos_setup.sh` after `terraform apply` finishes.
+To fix this, either you can give your user access to the interface by adding it to `libvirt`, `libvirt-qemu` and `kvm` groups or you can just use `sudo`, in case you opt for solution 2, make sure to run the `talosctl kubeconfig` command generated for you in `talos_setup.sh` after `terraform apply` finishes.
