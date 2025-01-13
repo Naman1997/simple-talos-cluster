@@ -46,9 +46,6 @@ In the proxmox web portal, go to `Datacenter` > `Storage` > Click on `local` > `
 
 ![local directory](image.png)
 
-## Make sure that passwordless auth works for proxmox
-
-`ssh root@<PROXMOX_IP> -i <SSH_KEY>`
 
 ## Create the cluster
 
