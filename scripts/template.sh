@@ -9,7 +9,7 @@ qm set 8000 --boot c --bootdisk $BOOTDISK
 qm resize 8000 $BOOTDISK +20G
 qm set 8000 --ipconfig0 ip=dhcp
 qm set 8000 --bios ovmf
-qm set 8000 -efidisk0 local-lvm:0,format=raw,efitype=4m,pre-enrolled-keys=0
+qm set 8000 -efidisk0 local-lvm:0,format=raw,efitype=4m,pre-enrolled-keys=1
 qm set 8000 --name talos-golden --template 1
 
 # Make sure vmid exists
