@@ -44,12 +44,12 @@ resource "proxmox_virtual_environment_file" "cloud_config" {
 }
 
 resource "proxmox_virtual_environment_download_file" "ubuntu_cloud_image" {
-  content_type       = "iso"
-  datastore_id       = "local"
-  node_name          = var.TARGET_NODE
-  url                = "https://cloud-images.ubuntu.com/oracular/current/oracular-server-cloudimg-amd64.img"
-  upload_timeout     = 1000
-  overwrite          = false
+  content_type   = "iso"
+  datastore_id   = "local"
+  node_name      = var.TARGET_NODE
+  url            = "https://cloud-images.ubuntu.com/oracular/current/oracular-server-cloudimg-amd64.img"
+  upload_timeout = 1000
+  overwrite      = false
 }
 
 resource "proxmox_virtual_environment_vm" "node" {
