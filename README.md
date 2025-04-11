@@ -14,11 +14,11 @@ Automated talos cluster with system extensions
 | [jq](https://stedolan.github.io/jq/) | Client |
 | [arp-scan](https://linux.die.net/man/1/arp-scan) | Client |
 | [talosctl](https://www.talos.dev/latest/learn-more/talosctl/) | Client |
-| [Terraform](https://www.terraform.io/) | Client |
+| [OpenTofu](https://opentofu.org/) | Client |
 | [HAproxy](http://www.haproxy.org/) | Raspberry Pi |
 | [Docker](https://docs.docker.com/) | Client |
 
-`Client` refers to the node that will be executing `terraform apply` to create the cluster. The `Raspberry Pi` can be replaced with a VM or a LXC container.
+`Client` refers to the node that will be executing `tofu apply` to create the cluster. The `Raspberry Pi` can be replaced with a VM or a LXC container.
 
 Docker is mandatory on the `Client` as this projects builds a custom talos image with system extensions using the [imager](https://github.com/siderolabs/talos/pkgs/container/installer) docker image on the `Client` itself.
 
@@ -50,9 +50,9 @@ In the proxmox web portal, go to `Datacenter` > `Storage` > Click on `local` > `
 ## Create the cluster
 
 ```
-terraform init -upgrade
-terraform plan
-terraform apply --auto-approve
+tofu init -upgrade
+tofu plan
+tofu apply --auto-approve
 ```
 
 ## Expose your cluster to the internet (Optional)
@@ -71,4 +71,4 @@ Currently this only happens if you're running this inside on a proxmox node that
 
 This project uses `arp-scan` to scan the local network using arp requests. In case your user does not have proper permissions to scan using the `virbr0` interface, then the talos VMs will not be found.
 
-To fix this, either you can give your user access to the interface by adding it to `libvirt`, `libvirt-qemu` and `kvm` groups or you can just use `sudo`, in case you opt for solution 2, make sure to run the `talosctl kubeconfig` command generated for you in `talos_setup.sh` after `terraform apply` finishes.
+To fix this, either you can give your user access to the interface by adding it to `libvirt`, `libvirt-qemu` and `kvm` groups or you can just use `sudo`, in case you opt for solution 2, make sure to run the `talosctl kubeconfig` command generated for you in `talos_setup.sh` after `tofu apply` finishes.
