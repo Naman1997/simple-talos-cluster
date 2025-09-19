@@ -2,7 +2,7 @@ terraform {
   required_providers {
     proxmox = {
       source  = "bpg/proxmox"
-      version = "0.78.2"
+      version = "0.83.2"
     }
   }
 }
@@ -47,7 +47,7 @@ resource "proxmox_virtual_environment_download_file" "ubuntu_cloud_image" {
   content_type   = "iso"
   datastore_id   = "local"
   node_name      = var.TARGET_NODE
-  url            = "https://cloud-images.ubuntu.com/oracular/current/oracular-server-cloudimg-amd64.img"
+  url            = "https://cloud-images.ubuntu.com/releases/plucky/release/ubuntu-25.04-server-cloudimg-amd64.img"
   upload_timeout = 1000
   overwrite      = false
 }
